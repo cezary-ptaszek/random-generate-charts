@@ -2,19 +2,38 @@ import matplotlib.pyplot as plt
 import numpy.random as npr
 import pandas as pd
 
-films = pd.read_csv("films.csv")
-deaths = pd.read_csv("zgony.csv", encoding="utf-8")
-iris = pd.read_csv("iris.csv")
-register = pd.read_csv("rejestr.csv", encoding="utf-8")
+films = pd.read_csv("res/films.csv")
+deaths = pd.read_csv("res/zgony.csv")
+iris = pd.read_csv("res/iris.csv")
 
 COUNT = 10
-DESTINATION = "dest/"
+TRAIN_DESTINATION = "train/"
+DEV_DESTINATION = "dev-0/"
+TEST_DESTINATION = "test-A/"
+
+
+def linear(size):
+    return npr.randint(50, size=size)
+
+
+def square():
+    return npr.randint(2, 10)**npr.randint(2, 12)
+
+
+def checkFunction(num, size):
+    if num == 1:
+        a = linear(size)
+    else:
+        a = square()
+    return a
 
 
 def randomNumbers():
-    size = npr.randint(0, 100)
-    x = npr.randint(100, size=size)
-    y = npr.randint(100, size=size)
+    size = npr.randint(2, 12)
+    num = npr.randint(1, 3)
+    print("Rodzaj funkcji: " + str(num))
+    x = checkFunction(num, size)
+    y = checkFunction(num, size)
     return x, y
 
 
@@ -25,16 +44,18 @@ def randomColor():
     return r, g, b
 
 
-def savingImage():
+def savingImage(destination):
     for i in range(COUNT):
-        data = randomNumbers()
-        for j in range(npr.randint(0, 5)):
-            plt.plot(data, color=randomColor())
-        name = DESTINATION + "char" + str(i) + ".png"
-        plt.savefig(name)
-        df = pd.DataFrame(data)
-        df.to_csv(name)
+        print("Wykres: " + str(i))
+        for j in range(npr.randint(0, 10)):
+            print("Ilość kresek: " + str(j))
+            plt.plot(randomNumbers(), color=randomColor())
+            df = pd.DataFrame(randomNumbers())
+            df.to_csv(destination + 'expected' + str(i) + '.tsv', sep='\t')
+        plt.savefig(destination + 'in' + str(i) + '.png')
 
 
 if __name__ == "__main__":
-    savingImage()
+    savingImage(TRAIN_DESTINATION)
+    savingImage(DEV_DESTINATION)
+    savingImage(TEST_DESTINATION)
